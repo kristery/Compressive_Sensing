@@ -20,7 +20,9 @@ for idx1 = 1:length(t0)
     end
 end
    
-signal = sin(seq).*(cos(log(seq+7)))+seq;
+%signal = sin(seq).*(cos(log(seq+7)))+seq;
+[signal, Fs] = audioread('voice.wav');
+signal = signal';
 
 dictionary = real(dictionary);
 
