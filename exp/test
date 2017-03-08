@@ -1,0 +1,41 @@
+m = 60;
+n = 70;
+A = sprand(m,n,0.2);
+x = sprand(n,1,0.4);
+
+error = [];
+rande = [];
+
+for k=1:30
+%k = 20;
+
+b = A*x;
+
+yfit = wmpalg('BMP',b,A);
+
+fprintf('error of baseline:%3.4f\n', sum(abs(yfit-b)));
+
+[W,H] = nnmf(A,k);
+
+[yfit,r,coeff,iopt] = wmpalg('BMP',b,W);
+
+weight = zeros(k,1);
+for idx = 1:size(iopt,2)
+	weight(iopt(idx)) = weight(iopt(idx)) + coeff(idx);
+end
+
+fprintf('error for the first step: %3.4f\n', sum(abs(yfit-b)));
+
+invH = pinv(H);
+new_x = invH*weight;
+%disp(new_x);
+
+y_ = A*new_x;
+
+fprintf('error of baseline:%3.4f\n', sum(abs(b-y_)));
+error = [error sum(abs(b-y_))];
+rande = [rande sum(abs(b-A*sprand(n,1,0.9)))];
+end
+
+disp(error);
+disp(full(rande));

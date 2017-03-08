@@ -1,12 +1,12 @@
 %%% it is used to test matchin pursuit with NMF reduction%%%
 % parameters: t0, f0, sigma
 siglen = 10000;
-interval = 30;
+interval = 40;
 fmax = 800;
 
 t0 = 1:siglen/interval:siglen;
 f0 = 1:500/interval:fmax;
-sigma = 0.1:5/interval:5;
+sigma = 1:100/interval:100;
         
 dictionary = zeros(length(t0)*length(f0)*length(sigma), siglen);
 seq = 1:siglen;
@@ -31,10 +31,11 @@ tic
 [YFIT,R,COEFF] = wmpalg('OMP', signal, dictionary');
 toc
 
+audiowrite('original.wav', YFIT, Fs);
 err0 = sum(abs(YFIT-signal'));
 
 tic
-[H, W, diff] = NMF_reduce(dictionary, 3);
+[H, W, diff] = NMF_reduce(dictionary, 100);
 toc
 disp(size(H));
 disp(size(W));
@@ -42,7 +43,7 @@ disp(size(W));
 tic
 [YFIT,R,COEFF] = wmpalg('OMP', signal, W');
 toc
-
+audiowrite('new.wav', YFIT, Fs);
 err1 = sum(abs(YFIT-signal'));
 disp(size(COEFF));
 disp(err0);

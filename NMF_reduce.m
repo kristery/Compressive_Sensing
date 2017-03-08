@@ -2,8 +2,14 @@
 function [H, W, diff] = NMF_reduce(A, c)
     diff = min(min(A));
     pA = A - diff;
-    
-	opt = statset('useParallel', true);    
+	k = c;
+	n = size(A, 1);
+	m = size(A, 2);
+	Winit = rand(n, k);
+	Hinit = rand(k, m);
+    max_iter = 50;
     %%% Find H, W such that min(|A-HW|)
-    [H, W] = nnmf(pA,c,'options', opt);
+    addpath('./NMF_CD/sparse_square');
+	%[H, W] = nnmf(pA,c);
+	[H W] = sparse_CD(pA, c, max_iter, Winit, Hinit, 1);
 end
